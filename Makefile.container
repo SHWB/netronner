@@ -2,13 +2,13 @@
 
 all: build
 
-/netronner-build/netronner-webapi/Makefile:
+/netronner-build/Makefile:
 	cp -r /netronner-src /netronner-build
 
-build: /netronner-build/netronner-webapi/Makefile
-	cd /netronner-build/netronner-webapi && \
+build: /netronner-build/Makefile
+	cd /netronner-build && \
 	$(MAKE) distclean && \
 	$(MAKE) all && \
 	$(MAKE) tarball; \
 	TARBALL_NAME=$$(find rel/ -name 'netronner*.tar.gz'); \
-	cp $$TARBALL_NAME /netronner-src/netronner-webapi
+	cp $$TARBALL_NAME /netronner-src
