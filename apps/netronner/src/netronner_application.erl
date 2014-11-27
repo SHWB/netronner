@@ -21,10 +21,10 @@ start(_StartType, _StartArgs) ->
 
     Dispatcher = cowboy_router:compile([
         {'_', [
-            {"/api/timeline/:page", timeline_handler, [TimelineRepo]},
-            {"/api/players/:player_id", player_handler, [PlayersRepo]},
-            {"/api/players/:player_id/achievements", player_achievements_handler, [PlayersRepo, AchievementsRepo, event_bus]},
-            {"/api/achievements", achievements_handler, [AchievementsRepo]}
+            {"/timeline/:page", timeline_handler, [TimelineRepo]},
+            {"/players/:player_id", player_handler, [PlayersRepo]},
+            {"/players/:player_id/achievements", player_achievements_handler, [PlayersRepo, AchievementsRepo, event_bus]},
+            {"/achievements", achievements_handler, [AchievementsRepo]}
         ]}
     ]),
     {ok, _} = start_cowboy(Protocol, Port, Acceptors, Dispatcher),
