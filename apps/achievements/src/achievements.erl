@@ -18,7 +18,7 @@ open(BasePath) ->
 
 -spec list(RepoHandle::atom()) -> [achievement:achievement()].
 list(RepoHandle) ->
-    dets:foldl(fun(El, Memo) -> [El|Memo] end, [], RepoHandle).
+    lists:keysort(1, dets:foldl(fun(El, Memo) -> [El|Memo] end, [], RepoHandle)).
 
 -spec set([achievement:achievement()], RepoHandle::atom()) -> ok.
 set(NewAchievements, RepoHandle) ->
