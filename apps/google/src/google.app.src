@@ -1,6 +1,6 @@
 {application, google, [
     {description, "Google API module"},
-    {vsn, "1"},
+    {vsn, "1.0.0"},
     {applications, [kernel, stdlib, inets, jiffy]},
     {modules, [google ]},
     {env, []}

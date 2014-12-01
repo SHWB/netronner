@@ -1,6 +1,6 @@
 {application, aaa, [
     {description, "AAA modules"},
-    {vsn, "1"},
+    {vsn, "1.0.0"},
     {registered, []},
     {applications, [kernel, stdlib, inets, jiffy, google]},
     {modules, [google_token, principal]},
