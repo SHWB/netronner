@@ -1,6 +1,6 @@
 {application, netronner, [
     {description, "NetRonner"},
-    {vsn, "1.0.0"},
+    {vsn, "1.0.1"},
     {registered, []},
     {applications, [ kernel, stdlib, crypto, public_key, ssl, cowboy, jiffy, players, achievements, timeline, aaa ]},
     {mod, { netronner_application, []}},
