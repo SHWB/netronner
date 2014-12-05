@@ -1,11 +1,8 @@
 PROJECT = netronner
 DEPS = cowboy jiffy
+dep_cowboy = git git://github.com/extend/cowboy.git 1.0.0
+dep_jiffy = git git://github.com/davisp/jiffy.git 0.13.0
 include erlang.mk
-
-# todo: fix deps at version
-#  {cowboy, ".*", {git, "git://github.com/extend/cowboy.git", {tag, "1.0.0"}}},
-#  {jiffy , ".*", {git, "git://github.com/davisp/jiffy.git", {tag, "0.13.0"}}}
-
 
 run: rel
 	_rel/netronner_node/bin/netronner_node console
