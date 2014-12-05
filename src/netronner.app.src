@@ -2,7 +2,16 @@
     {description, "NetRonner"},
     {vsn, "1.0.1"},
     {registered, []},
-    {applications, [ kernel, stdlib, crypto, public_key, ssl, cowboy, jiffy, players, achievements, timeline, aaa ]},
+    {applications, [
+        kernel,
+        stdlib,
+        crypto,
+        public_key,
+        ssl,
+        cowboy,
+        jiffy,
+        inets
+    ]},
     {mod, { netronner_application, []}},
     {modules, [
         achievements_handler,
@@ -10,10 +19,20 @@
         netronner_events_publisher,
         player_achievements_handler,
         player_handler,
-        timeline_handler
+        timeline_handler,
+        google_token,
+        principal,
+        google,
+        players,
+        player,
+        achievement,
+        achievements,
+        timeline,
+        event
     ]},
     {env, [
         {google_api_key, <<"KEY HERE">>},
+        {google_api_client_id, <<"ID HERE">>},
         {db_base_path, "/tmp"}
     ]}
  ]}.
