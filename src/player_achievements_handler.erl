@@ -12,7 +12,7 @@
     award_achievement_json/2
     ]).
 
-init(_Transport, Req, [_PlayersRepository, _AchievementsRepository, _EventBusRef] = Repositories) ->
+init(_Transport, Req, [_PlayersRepository, _EventBusRef] = Repositories) ->
     Req2 = cowboy_req:set_resp_header(<<"access-control-allow-origin">>, <<"*">>, Req),
     {upgrade, protocol, cowboy_rest, Req2, Repositories}.
 
@@ -53,14 +53,14 @@ allow_missing_post(Req, Repositories) ->
 content_types_accepted(Req, Repositories) ->
     {[{<<"application/json">>, award_achievement_json}], Req, Repositories}.
 
-award_achievement_json(Req, [PlayersRepository, AchievementsRepository, EventBusRef] = Repositories) ->
+award_achievement_json(Req, [PlayersRepository, EventBusRef] = Repositories) ->
     {PlayerId, _} = cowboy_req:binding(player_id, Req),
     {ok, Body, Req2} = cowboy_req:body(Req),
     IsOk = case decode_json(Body) of
         malformed ->
             false;
         {ok, AchievementName} ->
-            case achievements:load(AchievementName, AchievementsRepository) of
+            case achievements:load(AchievementName) of
                 notfound ->
                     false;
                 {ok, Achievement} ->

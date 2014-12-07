@@ -1,7 +1,11 @@
 {application, netronner, [
     {description, "NetRonner"},
     {vsn, "1.0.1"},
-    {registered, []},
+    {registered, [
+        netronner_application,
+        event_bus,
+        achievements
+    ]},
     {applications, [
         kernel,
         stdlib,

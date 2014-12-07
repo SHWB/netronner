@@ -17,14 +17,14 @@ start(_StartType, _StartArgs) ->
     Port = application:get_env(netronner, port, 8080),
     Acceptors = application:get_env(netronner, acceptors, 100),
 
-    {TimelineRepo, AchievementsRepo, PlayersRepo} = open_repositories(),
+    {TimelineRepo, PlayersRepo} = open_repositories(),
 
     Dispatcher = cowboy_router:compile([
         {'_', [
             {"/timeline/:page", timeline_handler, [TimelineRepo]},
             {"/players/:player_id", player_handler, [PlayersRepo]},
-            {"/players/:player_id/achievements", player_achievements_handler, [PlayersRepo, AchievementsRepo, event_bus]},
-            {"/achievements", achievements_handler, [AchievementsRepo]}
+            {"/players/:player_id/achievements", player_achievements_handler, [PlayersRepo, event_bus]},
+            {"/achievements", achievements_handler, []}
         ]}
     ]),
     {ok, _} = start_cowboy(Protocol, Port, Acceptors, Dispatcher),
@@ -39,7 +39,10 @@ stop(_State) ->
 init([]) ->
     {ok, {
         { one_for_one, 5, 100 },
-        [{event_bus, {gen_event, start_link, [{local, event_bus}]}, permanent, 5000, worker, [dynamic]}]
+        [
+            {event_bus, {gen_event, start_link, [{local, event_bus}]}, permanent, 5000, worker, [dynamic]},
+            {achievements, {achievements, start_link, []}, permanent, 5000, worker, [achievements]}
+        ]
     }}.
 
 %% private
@@ -58,9 +61,8 @@ start_cowboy(UnsupportedProtocol, _, _, _) ->
 open_repositories() ->
     {ok, BasePath} = application:get_env(db_base_path),
     {ok, Timeline} = timeline:open(BasePath),
-    {ok, Achievements} = achievements:open(BasePath),
     {ok, Players} = players:open(BasePath),
-    {Timeline, Achievements, Players}.
+    {Timeline, Players}.
 
 start_link_supervisor() ->
     supervisor:start_link({local, netronner_supervisor}, ?MODULE, []).
