@@ -12,4 +12,4 @@ tarball: rel
 	cd _rel; \
 	tar cvzf netronner-api-$$GIT_COMMIT$$IS_SNAPSHOT.tar.gz netronner_node	
 container-build:
-	docker run -v $$(readlink -f .):/netronner-src -ti --rm caligin/debian-erlang /bin/bash -c "cd /netronner-src && make -f Makefile.container"
+	docker run -v $$(readlink -f .):/netronner-src -ti --rm caligin/debian-erlang:d7e17.4 /bin/bash -c "cd /netronner-src && make -f Makefile.container"
