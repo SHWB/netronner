@@ -12,7 +12,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-.PHONY: all deps app rel docs tests clean distclean help erlang-mk
+.PHONY: all deps app rel docs tests clean distclean help
 
 ERLANG_MK_VERSION = 1
 
@@ -71,18 +71,6 @@ define core_http_get
 	erl -noshell -eval 'ssl:start(), inets:start(), case httpc:request(get, {"$(2)", []}, [{autoredirect, true}], []) of {ok, {{_, 200, _}, _, Body}} -> case file:write_file("$(1)", Body) of ok -> ok; {error, R1} -> halt(R1) end; {error, R2} -> halt(R2) end, halt(0).'
 endef
 endif
-
-# Automated update.
-
-ERLANG_MK_BUILD_CONFIG ?= build.config
-ERLANG_MK_BUILD_DIR ?= .erlang.mk.build
-
-erlang-mk:
-	git clone https://github.com/ninenines/erlang.mk $(ERLANG_MK_BUILD_DIR)
-	if [ -f $(ERLANG_MK_BUILD_CONFIG) ]; then cp $(ERLANG_MK_BUILD_CONFIG) $(ERLANG_MK_BUILD_DIR); fi
-	cd $(ERLANG_MK_BUILD_DIR) && make
-	cp $(ERLANG_MK_BUILD_DIR)/erlang.mk ./erlang.mk
-	rm -rf $(ERLANG_MK_BUILD_DIR)
 
 # Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
 # This file is part of erlang.mk and subject to the terms of the ISC License.
@@ -760,6 +748,83 @@ ifneq ($(wildcard src/),)
 ebin/$(PROJECT).app:: $(shell find templates -type f -name \*.dtl 2>/dev/null)
 	$(if $(strip $?),$(call compile_erlydtl,$?))
 endif
+
+# Copyright (c) 2014, Enrique Fernandez <enrique.fernandez@erlang-solutions.com>
+# This file is contributed to erlang.mk and subject to the terms of the ISC License.
+
+.PHONY: help-eunit build-eunit eunit distclean-eunit
+
+# Configuration
+
+EUNIT_ERLC_OPTS ?= +debug_info +warn_export_vars +warn_shadow_vars +warn_obsolete_guard -DTEST
+
+EUNIT_DIR ?=
+EUNIT_DIRS = $(sort $(EUNIT_DIR) ebin)
+EXT_EUNIT_DIRS = $(filter-out ebin,$(EUNIT_DIRS))
+TAGGED_EUNIT_DIRS = $(foreach dir,$(EUNIT_DIRS),\
+	$(shell echo $(dir) | sed -e 's/\(.*\)/{dir,"\1"}/g'))
+
+EUNIT_OPTS ?= verbose {report,{eunit_surefire,[{dir,"logs"}]}}
+
+# Utility functions
+
+# stringify function
+DQUOTE = "
+# This coment is required to avoid syntax highlighting issues "
+ESCDQUOTE = \"
+stringify="$(subst $(DQUOTE),$(ESCDQUOTE),$(strip $(1)))"
+
+define str-join
+	$(shell set +B; echo "$(call stringify, $(1))" | sed -e "s/ /,/g"; set -B)
+endef
+
+# Core targets.
+
+help:: help-eunit
+
+tests:: eunit
+
+clean:: clean-eunit
+
+distclean:: distclean-eunit
+
+# Plugin-specific targets.
+
+EUNIT_RUN = erl \
+	-no_auto_compile \
+	-noshell \
+	-pa $(realpath $(EUNIT_DIR)) $(DEPS_DIR)/*/ebin \
+	-pz $(realpath ebin) \
+	-eval 'eunit:test([$(call str-join,$(TAGGED_EUNIT_DIRS))], [$(call str-join,$(EUNIT_OPTS))]).' \
+	-s erlang halt
+
+help-eunit:
+	@printf "%s\n" "" \
+		"EUnit targets:" \
+		"  eunit       Run all the EUnit tests for this project"
+
+ifeq ($(strip $(EUNIT_DIR)),)
+build-eunit:
+else ifeq ($(strip $(EUNIT_DIR)),ebin)
+build-eunit:
+else
+build-eunit:
+	$(gen_verbose) erlc -v $(EUNIT_ERLC_OPTS) -I include/ -o $(EUNIT_DIR) \
+		$(wildcard $(EUNIT_DIR)/*.erl $(EUNIT_DIR)/*/*.erl) -pa ebin/
+endif
+
+eunit: ERLC_OPTS = $(EUNIT_ERLC_OPTS)
+eunit: clean deps app build-eunit
+	@echo '$(EUNIT_OPTS)' | perl -ne \
+		'mkdir $$1 if /{report,{eunit_surefire,\[{dir,"(.*)"}\]}}/'
+	$(gen_verbose) $(EUNIT_RUN)
+
+clean-eunit:
+	$(gen_verbose) $(foreach dir,$(EUNIT_DIRS),rm -rf $(dir)/*.beam)
+
+distclean-eunit:
+	@echo '$(EUNIT_OPTS)' | perl -ne \
+		'rmdir $$1 if /{report,{eunit_surefire,\[{dir,"(.*)"}\]}}/'
 
 # Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
 # This file is part of erlang.mk and subject to the terms of the ISC License.
