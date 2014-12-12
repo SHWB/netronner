@@ -12,3 +12,4 @@ _rel
 relx
 ebin
 .erlang.mk.*
+logs
