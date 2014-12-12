@@ -1,4 +1,4 @@
 language: erlang
 otp_release:
    - 17.1
-script: make deps tests dialyze app rel
+script: make deps eunit dialyze app rel
