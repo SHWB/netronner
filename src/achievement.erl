@@ -39,3 +39,23 @@ from_map(#{ <<"name">> := Name, <<"description">> := Description, <<"icon">> := 
 -spec to_map(achievement()) -> map().
 to_map({Name, Description, Icon}) ->
     #{ <<"name">> => Name, <<"description">> => Description, <<"icon">> => Icon}.
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+accessors_test_() ->
+    Achi = achievement:new(<<"achi">>, <<"desc">>, <<"noicon">>),
+    [
+        {"name", ?_assertEqual(<<"achi">>, achievement:name(Achi))},
+        {"description", ?_assertEqual(<<"desc">>, achievement:description(Achi))},
+        {"icon", ?_assertEqual(<<"noicon">>, achievement:icon(Achi))}
+    ].
+
+from_map_throws_when_missing_test_() ->
+    [
+        %TODO: should fail with badarg
+        {"name", ?_assertError(function_clause, to_map(#{ <<"description">> => <<"desc">>, <<"icon">> => <<"noicon">>}))},
+        {"description", ?_assertError(function_clause, to_map(#{ <<"name">> => <<"achi">>, <<"icon">> => <<"noicon">>}))},
+        {"icon", ?_assertError(function_clause, to_map(#{ <<"name">> => <<"achi">>, <<"description">> => <<"desc">>}))}
+    ].
+-endif.
