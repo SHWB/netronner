@@ -10,5 +10,5 @@ build: /netronner-build/Makefile
 	$(MAKE) distclean && \
 	$(MAKE) all && \
 	$(MAKE) tarball; \
-	TARBALL_NAME=$$(find rel/ -name 'netronner*.tar.gz'); \
+	TARBALL_NAME=$$(find _rel/ -name 'netronner*.tar.gz'); \
 	cp $$TARBALL_NAME /netronner-src
