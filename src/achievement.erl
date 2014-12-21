@@ -34,7 +34,9 @@ eq({LhName, _, _}, {RhName, _, _}) ->
 
 -spec from_map(map()) -> achievement().
 from_map(#{ <<"name">> := Name, <<"description">> := Description, <<"icon">> := Icon}) when is_binary(Name), is_binary(Description), is_binary(Icon) ->
-    {Name, Description, Icon}.
+    {Name, Description, Icon};
+from_map(_) ->
+    error(badarg).
 
 -spec to_map(achievement()) -> map().
 to_map({Name, Description, Icon}) ->
@@ -53,9 +55,8 @@ accessors_test_() ->
 
 from_map_throws_when_missing_test_() ->
     [
-        %TODO: should fail with badarg
-        {"name", ?_assertError(function_clause, to_map(#{ <<"description">> => <<"desc">>, <<"icon">> => <<"noicon">>}))},
-        {"description", ?_assertError(function_clause, to_map(#{ <<"name">> => <<"achi">>, <<"icon">> => <<"noicon">>}))},
-        {"icon", ?_assertError(function_clause, to_map(#{ <<"name">> => <<"achi">>, <<"description">> => <<"desc">>}))}
+        {"name", ?_assertError(badarg, from_map(#{ <<"description">> => <<"desc">>, <<"icon">> => <<"noicon">>}))},
+        {"description", ?_assertError(badarg, from_map(#{ <<"name">> => <<"achi">>, <<"icon">> => <<"noicon">>}))},
+        {"icon", ?_assertError(badarg, from_map(#{ <<"name">> => <<"achi">>, <<"description">> => <<"desc">>}))}
     ].
 -endif.
