@@ -9,7 +9,7 @@ is_authenticated(Req) ->
 is_authenticated(_Req, []) ->
     {false, <<"Bearer realm=\"netronner\"">>};
 is_authenticated(_Req, [Token]) ->
-    {ok, <<ClientId/binary>>} = application:get_env(aaa, google_api_client_id),
+    {ok, <<ClientId/binary>>} = application:get_env(netronner, google_api_client_id),
     case google:validate_access_token(Token, ClientId) of
         ok -> true;
         error -> {false, <<"Bearer error=\"invalid_token\"">>}
