@@ -33,7 +33,7 @@ load(AchievementName) ->
 %% gen_server.
 
 init([]) ->
-    TableHandle = ets_from_json(),
+    TableHandle = load_to_ets(),
     {ok, TableHandle}.
 
 handle_call(list, _From, TableHandle) ->
@@ -68,13 +68,7 @@ load(AchievementName, TableHandle) ->
         [] -> notfound
     end.
 
-ets_from_json() ->
+load_to_ets() ->
     TableHandle = ets:new(?MODULE, [ordered_set]),
-    ets:insert(TableHandle, jsonfile_to_achievements()),
+    ets:insert(TableHandle, achievement_definitions:all()),
     TableHandle.
-
-jsonfile_to_achievements() ->
-    Filename = filename:join(code:priv_dir(netronner),"achievements.json"),
-    {ok, Content} = file:read_file(Filename),
-    AchievementsAsMaps = jiffy:decode(Content, [return_maps]),
-    lists:map(fun achievement:from_map/1, AchievementsAsMaps).
