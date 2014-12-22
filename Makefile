@@ -2,7 +2,6 @@ PROJECT = netronner
 DEPS = cowboy jiffy
 dep_cowboy = git git://github.com/extend/cowboy.git 1.0.0
 dep_jiffy = git git://github.com/davisp/jiffy.git 0.13.0
-SHELL=/bin/bash
 include erlang.mk
 
 run: rel
