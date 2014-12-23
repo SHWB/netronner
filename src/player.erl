@@ -32,6 +32,30 @@ with_achievement(Achievement, {Id, Name, ImageUrl, Achievements}) ->
         false -> {Id, Name, ImageUrl, lists:sort(fun sort_by_achievement_name/2, [Achievement | Achievements])}
     end.
 
--spec sort_by_achievement_name(achievement:achievement(),achievement:achievement()) -> boolean().
-sort_by_achievement_name({LhName, _ , _}, {RhName, _, _}) ->
-    string:to_lower(binary_to_list(LhName)) =< string:to_lower(binary_to_list(RhName)).
+-spec sort_by_achievement_name(achievement:achievement(), achievement:achievement()) -> boolean().
+sort_by_achievement_name(LhAchievement, RhAchievement) ->
+    string:to_lower(binary_to_list(achievement:name(LhAchievement))) =< string:to_lower(binary_to_list(achievement:name(RhAchievement))).
+
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+accessors_test_() ->
+    Player = new(<<"id">>, <<"name">>, <<"img">>),
+    [
+        {"id", ?_assertEqual(<<"id">>, id(Player))},
+        {"name", ?_assertEqual(<<"name">>, name(Player))},
+        {"image_url", ?_assertEqual(<<"img">>, image_url(Player))},
+        {"achievements", ?_assertEqual([], achievements(Player))}
+    ].
+
+award_test_() ->
+    Player = new(<<"p">>, <<"p">>, <<"">>),
+    Achi = {<<"a">>, <<"">>, <<"">>, <<"">>, []},
+    EqualAchi = {<<"a">>, <<"1">>, <<"1">>, <<"1">>, []},
+    [
+        {"adds to achis when not present", ?_assertEqual([Achi], achievements(with_achievement(Achi, Player)))},
+        {"does nothing when equivalent achi already present", ?_assertEqual([Achi], achievements(with_achievement(EqualAchi, with_achievement(Achi, Player))))}
+    ].
+
+-endif.

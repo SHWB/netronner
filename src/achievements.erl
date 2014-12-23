@@ -33,7 +33,10 @@ load(AchievementName) ->
 %% gen_server.
 
 init([]) ->
-    TableHandle = load_to_ets(),
+    init(achievement_definitions:all());
+init([_A | _O] = Achievements) ->
+    TableHandle = ets:new(?MODULE, [ordered_set]),
+    ets:insert(TableHandle, Achievements),
     {ok, TableHandle}.
 
 handle_call(list, _From, TableHandle) ->
@@ -67,8 +70,3 @@ load(AchievementName, TableHandle) ->
         [Achievement] -> {ok, Achievement};
         [] -> notfound
     end.
-
-load_to_ets() ->
-    TableHandle = ets:new(?MODULE, [ordered_set]),
-    ets:insert(TableHandle, achievement_definitions:all()),
-    TableHandle.
