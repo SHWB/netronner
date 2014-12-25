@@ -51,8 +51,8 @@ accessors_test_() ->
 
 award_test_() ->
     Player = new(<<"p">>, <<"p">>, <<"">>),
-    Achi = {<<"a">>, <<"">>, <<"">>, <<"">>, []},
-    EqualAchi = {<<"a">>, <<"1">>, <<"1">>, <<"1">>, []},
+    Achi = {<<"a">>, <<"">>, <<"">>, []},
+    EqualAchi = {<<"a">>, <<"1">>, <<"1">>, []},
     [
         {"adds to achis when not present", ?_assertEqual([Achi], achievements(with_achievement(Achi, Player)))},
         {"does nothing when equivalent achi already present", ?_assertEqual([Achi], achievements(with_achievement(EqualAchi, with_achievement(Achi, Player))))}

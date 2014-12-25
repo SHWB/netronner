@@ -49,5 +49,5 @@ achi_to_map(Achi) ->
     #{
         <<"name">> => achievement:name(Achi),
         <<"description">> => achievement:description(Achi),
-        <<"icon">> => achievement:icon(Achi)
+        <<"flavourText">> => achievement:flavour_text(Achi)
     }.

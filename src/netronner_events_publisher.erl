@@ -24,8 +24,7 @@ handle_event({achievement_award, Player, Achievement}, TimelineRepo) ->
             <<"image_url">> => player:image_url(Player)
         },
         <<"achievement">> => #{
-            <<"name">> => achievement:name(Achievement),
-            <<"icon">> => achievement:icon(Achievement)
+            <<"name">> => achievement:name(Achievement)
         }
     },
     Event = event:new(<<"achievement_award">>, Data),
