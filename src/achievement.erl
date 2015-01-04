@@ -12,39 +12,42 @@
     Name::binary(),
     Description::binary(),
     FlavourText::binary(),
-    Implies::list(Name::binary())
+    Implies::list(Name::binary()),
+    SeriesAndRank::{binary(), integer()} | undefined
     }.
 -export_type([achievement/0]).
 
 -spec name(achievement()) -> binary().
-name({Name, _, _, _}) ->
+name({Name, _, _, _, _}) ->
     Name.
 
 -spec description(achievement()) -> binary().
-description({_, Description, _, _}) ->
+description({_, Description, _, _, _}) ->
     Description.
 
 -spec flavour_text(achievement()) -> binary().
-flavour_text({_, _, FlavourText, _}) ->
+flavour_text({_, _, FlavourText, _, _}) ->
     FlavourText.
 
 -spec implied_achievements(achievement()) -> list(binary()).
-implied_achievements({_, _, _, Implied}) ->
+implied_achievements({_, _, _, Implied, _}) ->
     Implied.
 
 -spec eq(achievement(), achievement()) -> boolean().
-eq({LhName, _, _, _}, {RhName, _, _, _}) ->
+eq({LhName, _, _, _, _}, {RhName, _, _, _, _}) ->
     LhName =:= RhName.
 
 -spec to_map(achievement()) -> map().
-to_map({Name, Description, FlavourText, _}) ->
-    #{ <<"name">> => Name, <<"description">> => Description, <<"flavour_text">> => FlavourText}.
+to_map({Name, Description, FlavourText, _, undefined}) ->
+    #{ <<"name">> => Name, <<"description">> => Description, <<"flavour_text">> => FlavourText};
+to_map({Name, Description, FlavourText, _, {Series, Rank}}) ->
+    #{ <<"name">> => Name, <<"description">> => Description, <<"flavour_text">> => FlavourText, <<"series">> => Series, <<"rank">> => Rank}.
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 
 accessors_test_() ->
-    Achi = {<<"achi">>, <<"desc">>, <<"flav">>, [<<"other">>]},
+    Achi = {<<"achi">>, <<"desc">>, <<"flav">>, [<<"other">>], undefined},
     [
         {"name", ?_assertEqual(<<"achi">>, achievement:name(Achi))},
         {"description", ?_assertEqual(<<"desc">>, achievement:description(Achi))},
@@ -53,8 +56,8 @@ accessors_test_() ->
     ].
 
 equals_when_name_matches_test() ->
-    L = {<<"match">>, <<"a">>, <<"a">>, []},
-    R = {<<"match">>, <<"b">>, <<"b">>, []},
+    L = {<<"match">>, <<"a">>, <<"a">>, [], undefined},
+    R = {<<"match">>, <<"b">>, <<"b">>, [], undefined},
     ?assert(eq(L, R)).
 
 -endif.
