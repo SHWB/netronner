@@ -32,7 +32,7 @@ all() ->
      <<"">>, [], undefined},
     {<<"Deja Vu">>,
      <<"Call twice the same tile to complete two identical Chows in a single game">>,
-     <<"A déjà vu is usually a glitch in the Matrix. It happens when they chi something.">>, [], undefined},
+     <<"A deja vu is usually a glitch in the Matrix. It happens when they chi something.">>, [], undefined},
     {<<"Delusions of Victory">>,
      <<"Declare a false Ron and pay a chombo penalty for it">>,<<"LOL JK!!11!!one!">>, [], undefined},
     {<<"Die Hard">>,
@@ -193,3 +193,12 @@ all() ->
      <<"Take precedence of a Chi/Pon declaration with a Pon/Ron declaration">>,
      <<"">>, [], undefined}
     ].
+
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+all_encodable_test_() ->
+    [ {achievement:name(A), ?_test(jiffy:encode(achievement:to_map(A))) } || A <- all()].
+
+-endif.
