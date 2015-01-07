@@ -39,15 +39,20 @@ encode_json(Player) ->
             <<"id">> => player:id(Player),
             <<"name">> => player:name(Player),
             <<"imageUrl">> => player:image_url(Player),
-            <<"achievements">> => lists:map(fun achi_to_map/1, player:achievements(Player))
+            <<"achievements">> => lists:map(fun achievement:to_map/1, player:achievements(Player))
         },
     jiffy:encode(AsMap).
 
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
 
--spec achi_to_map(achievement:achievement()) -> map().
-achi_to_map(Achi) -> 
-    #{
-        <<"name">> => achievement:name(Achi),
-        <<"description">> => achievement:description(Achi),
-        <<"flavourText">> => achievement:flavour_text(Achi)
-    }.
+encode_test_() ->
+    AchievementInSeries = lists:keyfind(<<"To the Top (Rank 1)">>, 1, achievement_definitions:all()),
+    Player = player:with_achievement(AchievementInSeries, player:new(<<"123">>, <<"someone">>, <<"">>)),
+    #{ <<"achievements">> := [EncodedAchievement]} = jiffy:decode(encode_json(Player), [return_maps]),
+    [
+        {"player achievement has series", ?_assert(maps:is_key(<<"series">>, EncodedAchievement))},
+        {"player achievement has rank", ?_assert(maps:is_key(<<"rank">>, EncodedAchievement))}
+    ].
+
+-endif.
