@@ -62,18 +62,18 @@ close(RepoHandle) ->
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 
-award_test() -> 
+award_test_() -> 
     {setup, fun() -> 
-        Implied = {<<"implied">>,<<"">>,<<"">>,<<"">>,[]},
-        Implying = {<<"implying">>,<<"">>,<<"">>,<<"">>,[<<"implied">>]},
+        Implied = {<<"implied">>,<<"">>,<<"">>, [], undefined},
+        Implying = {<<"implying">>,<<"">>,<<"">>, [<<"implied">>], undefined},
         {ok, Pid} = gen_server:start_link({local, achievements}, achievements, [Implied, Implying], []),
         Player = player:new(<<"id">>, <<"">>, <<"">>),
-        {Player, [Implied, Implying], Pid}
+        {Player, {Implied, Implying}, Pid}
     end,
     fun({_, _, Pid}) ->
         exit(Pid, normal)
     end,
-    fun({Player, [Implied, Implying], _}) ->
+    fun({Player, {Implied, Implying}, _}) ->
         [
             {"simple", ?_assertEqual(1, length(player:achievements(award_achievement(Player, Implied))))},
             {"implying another", ?_assertEqual(2, length(player:achievements(award_achievement(Player, Implying))))},
