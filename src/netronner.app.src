@@ -32,7 +32,8 @@
         achievement,
         achievements,
         timeline,
-        event
+        event,
+        killswitch
     ]},
     {env, [
         {google_api_key, <<"KEY HERE">>},

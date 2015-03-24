@@ -19,6 +19,14 @@ init(_Transport, Req, [_PlayersRepository, _EventBusRef] = Repositories) ->
 rest_init(Req, Repositories) ->
     {ok, Req, Repositories}.    
 
+service_available(Req, Repositories) ->
+    IsAvailable = killswitch:is_readwrite(),
+    Req2 = case IsAvailable of
+        true -> Req;
+        false -> cowboy_req:set_resp_header(<<"retry-after">>, 60, Req)
+    end,
+    {IsAvailable, Req2, Repositories}.
+
 allowed_methods(Req, Repositories) ->
     {[<<"POST">>, <<"OPTIONS">>], Req, Repositories}.
 
