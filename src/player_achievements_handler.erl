@@ -24,7 +24,7 @@ service_available(Req, Repositories) ->
     IsAvailable = killswitch:is_readwrite(),
     Req2 = case IsAvailable of
         true -> Req;
-        false -> cowboy_req:set_resp_header(<<"retry-after">>, 60, Req)
+        false -> cowboy_req:set_resp_header(<<"retry-after">>, <<"60">>, Req)
     end,
     {IsAvailable, Req2, Repositories}.
 
