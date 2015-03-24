@@ -3,6 +3,7 @@
 -export([
     init/3,
     rest_init/2,
+    service_available/2,
     allowed_methods/2,
     is_authorized/2,
     options/2,

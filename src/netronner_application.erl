@@ -41,8 +41,7 @@ init([]) ->
         { one_for_one, 5, 100 },
         [
             {event_bus, {gen_event, start_link, [{local, event_bus}]}, permanent, 5000, worker, [dynamic]},
-            {achievements, {achievements, start_link, []}, permanent, 5000, worker, [achievements]},
-            {killswitch, {killswitch, start_link, []}, permanent, 5000, worker, [killswitch]}
+            {achievements, {achievements, start_link, []}, permanent, 5000, worker, [achievements]}
         ]
     }}.
 
