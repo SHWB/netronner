@@ -6,6 +6,9 @@
 -spec all() -> Achievements::list(achievement:achievement()).
 all() ->
     [
+    {<<">tfw noten">>,
+     <<"Be the only player not in tenpai at the end of draw round">>,
+     <<"">> [], undefined},
     {<<"8th Wonder">>,
      <<"Win a bonus hand with at least 8 Honba (bonus counters) are in play">>,
      <<"">>, [], undefined},
@@ -150,9 +153,6 @@ all() ->
     {<<"Superman">>,
      <<"Terminate a full game (either East-South or East-Only) without losing a single point (losing Riichi bets counts, too)">>,
      <<"">>, [], undefined},
-    {<<">tfw noten">>,
-     <<"Be the only player not in tenpai at the end of draw round">>,
-     <<"East is a fag">> [], undefined},
     {<<"Thanks for Nothing">>,<<"Score a Fully Concealed Tsumo">>,<<"">>, [], undefined},
     {<<"They See Me Ronning, They Hatin'">>,
      <<"Declare three consecutive Rons from three different players">>,
